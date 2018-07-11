@@ -4,6 +4,7 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'file-report',
     environment: environment,
+    podModulePrefix: 'file-report/pods',
     baseURL: '/',
     locationType: 'auto',
     EmberENV: {
