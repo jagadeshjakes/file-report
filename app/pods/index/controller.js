@@ -1,5 +1,5 @@
 import Ember from 'ember';
-
+import $ from 'jquery';
 export default Ember.Controller.extend({
   actions:{
     upload:function(){
@@ -15,7 +15,7 @@ export default Ember.Controller.extend({
           processData: false,
           contentType: false,
           cache: false,
-          success: function (data) {
+          success: function () {
               console.log("SUCCESS");
           }
       });

@@ -3,7 +3,9 @@
 			{{#link-to "index" class="navbar-brand"}}
 			Index
 			{{/link-to}}
+			<div class="navbar-nav ml-auto">
+				<button class="btn btn-outline-info btn-sm"{{action "logout"}}>Logout</button>
+			</div>
 </nav>
-</div>
-
 {{outlet}}
+</div>

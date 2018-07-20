@@ -1,41 +1,101 @@
-<div class="container">
-  <!--<div>
-    {{!--#each model.columns as |column index|}}
-    <input type="text" value={{}} name={{column}} placeholder={{column}}>
-    {{/each--}}
-  </div>-->
 <div class="row">
-<div class="col-5">
-<select class="form-control form-control-sm" onchange={{action "setXAxis" value="target.value"}}>
-  <option value="no" selected>--X-Axis--</option>
-{{#each model.columns as |column|}}
-		<option value={{column}}>{{column}}</option>
-{{/each}}
-</select>
-</div>
-<div class="col-5">
-<select class="form-control form-control-sm" onchange={{action "setYAxis" value="target.value"}}>
-  <option value="no" selected>--Y-Axis--</option>
-{{#each model.columns as |column|}}
-		<option value={{column}}>{{column}}</option>
-{{/each}}
-</select>
-</div>
-<button class='btn btn-info btn-sm'{{action 'showTable'}}>Show table</button>
+
+  {{!--<h4>Filter Details</h4>
+  <div class="row">
+    {{#each column in model.columns}}
+    <div class="col-3">
+    {{input type="text" class="form-control" value=column.value placeholder=column.columnName}}
+    </div>
+    {{/each}}
+  </div>
+  <br><button class="btn col-1" {{action 'doFilter'}}>filter</button>--}}
+<div class="col-4">
+  <div class="form-group">
+    <h6>Select the columns to show</h6>
+    <ul>
+  	{{#each model.columns as |ch|}}
+    <li>{{input type="checkbox" checked=ch.isChecked}}
+      	<label>{{ch.columnName}}</label></li>
+  	{{/each}}
+  </ul>
+  <button class="btn btn-secondary" {{action 'showColumns'}}>Showtable</button>
+  </div>
+
 </div>
 
-{{#if viewMatrix}}
-<button class="btn btn-sm" {{action 'hideTable'}}>cancel</button>
+<div class="col-4">
+  <h4>Matrix Form</h4>
+  <div class="row">
+    <div class="col-5">
+      <select class="form-control form-control-sm" onchange={{action "setXAxis" value="target.value"}}>
+        <option value="no" selected>--X-Axis--</option>
+        {{#each model.columns as |column|}}
+		      <option value={{column.columnName}}>{{column.columnName}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="col-5">
+        <select class="form-control form-control-sm" onchange={{action "setYAxis" value="target.value"}}>
+          <option value="no" selected>--Y-Axis--</option>
+          {{#each model.columns as |column|}}
+		        <option value={{column.columnName}}>{{column.columnName}}</option>
+            {{/each}}
+          </select>
+        </div>
+    </div>
+    <button class='btn btn-info btn-sm'{{action 'showTable'}}>Show table</button>
+  </div>
+
+
+
+<div class="col-4">
+  <h4>Select column for graph</h4>
+  <div class="row">
+    <div class="col-5">
+      <select class="form-control form-control-sm" onchange={{action "drawChart" value="target.value"}}>
+        <option value="no" selected>-select-graph--</option>
+        {{#each model.columns as |column|}}
+		      <option value={{column.columnName}}>{{column.columnName}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+{{#if viewFilter}}
+<button class="btn btn-sm" {{action 'hideFilter'}}>cancel</button>
+<div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;">
 <table class="table">
-  {{#each matrixData.rowData as |row i|}}
+  {{#each filterData as |row|}}
     <tr>
-      {{#each row as |col j|}}
-      <td onclick={{action 'getvertex' i j}}>{{col}}</td>
+      {{#each row as |col|}}
+      <td>{{col}}</td>
       {{/each}}
     </tr>
   {{/each}}
 </table>
+</div>
 {{/if}}
+</div>
+
+<div>
+  {{#if viewMatrix}}
+  <button class="btn btn-sm" {{action 'hideMatrix'}}>cancel</button>
+  <div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;">
+  <table class="table">
+    {{#each matrixData as |row i|}}
+      <tr>
+        {{#each row as |col j|}}
+        <td onclick={{action 'getvertex' i j}}>{{col}}</td>
+        {{/each}}
+      </tr>
+    {{/each}}
+  </table>
+  </div>
+  {{/if}}
+</div>
 
 <div class="modal hide" id="mymodal">
   <div class="modal-dialog modal-lg" role="document">
@@ -47,13 +107,12 @@
         </button>
       </div>
       <div class="modal-body">
-
+        <div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;" id="modal-content">
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
-</div>
-
 </div>

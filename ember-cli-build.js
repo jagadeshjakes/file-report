@@ -13,6 +13,7 @@ module.exports = function(defaults) {
   });
   app.import('bower_components/bootstrap/dist/js/bootstrap.js');
   app.import('bower_components/highcharts/highcharts.js');
+  app.import('bower_components/highcharts/css/highcharts.css');
 
   // Use `app.import` to add additional libraries to the generated
   // output files.

@@ -3,10 +3,13 @@
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'file-report',
+    contentSecurityPolicy: {
+	     'style-src': "'self' 'unsafe-inline'"
+     },
     environment: environment,
     podModulePrefix: 'file-report/pods',
     baseURL: '/',
-    locationType: 'auto',
+    locationType: 'hash',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
