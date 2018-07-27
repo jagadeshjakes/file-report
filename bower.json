@@ -14,6 +14,9 @@
     "qunit": "~1.20.0",
     "bootstrap": "^4.1.1",
     "highcharts": "^6.1.1",
-    "modal": "^1.1.9"
+    "modal": "^1.1.9",
+    "spin.js": "spin-js#^2.0.1",
+    "progressbar.js": "^1.0.1",
+    "jquery-circle-progress": "^1.2.2"
   }
 }

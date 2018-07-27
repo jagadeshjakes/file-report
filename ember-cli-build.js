@@ -14,7 +14,13 @@ module.exports = function(defaults) {
   app.import('bower_components/bootstrap/dist/js/bootstrap.js');
   app.import('bower_components/highcharts/highcharts.js');
   app.import('bower_components/highcharts/css/highcharts.css');
-
+  app.import('bower_components/highcharts/modules/data.js');
+  app.import('bower_components/highcharts/modules/drilldown.js');
+  app.import('bower_components/spin.js/spin.js');
+  app.import('bower_components/spin.js/jquery.spin.js');
+  app.import('bower_components/progressbar.js/dist/progressbar.js');
+  app.import('bower_components/progressbar.js/dist/progressbar.min.js');
+  app.import('bower_components/jquery-circle-progress/dist/circle-progress.js');
   // Use `app.import` to add additional libraries to the generated
   // output files.
   //

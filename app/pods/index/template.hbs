@@ -1,13 +1,14 @@
-<div class="container">
+<div class="container" id="tem-content">
 <div class="row">
 <form class="form-group" id="fileUploadForm" action="upload" method="post" enctype="multipart/form-data">
   <div class="col">
-    <input class="form-control-file border" type="file" accept=".csv" name="file" size="50"><br>
+    <input class="form-control-file border" type="file" accept=".csv" name="file" id="upfile" size="50"><br>
   </div>
   <div class="col">
-    <button class="btn btn-info btn-sm" {{action "upload"}}>Upload</button>
+    <button class="btn btn-info btn-sm" {{action "upload"}} >Upload</button>
   </div>
 </form>
+
 </div>
 <ul>
   <h4>Reports in the DataBase</h4>
