@@ -47,7 +47,7 @@
 
 
 
-<div class="col-6">
+{{!--<div class="col-6">
   <h4>Select column for graph</h4>
   <div class="row">
     <div class="col-5">
@@ -59,73 +59,63 @@
         </select>
       </div>
     </div>
-  </div>
+  </div>--}}
+
+
 </div>
 <br>
-
+<h4>Multiple Axes</h4>
 <div class="row">
   <div class="col-3">
     <h6>X-Axis:</h6>
     <select class="form-control form-control-sm" onchange={{action "setXAxis" value="target.value"}}>
       <option value="no" selected>-select-graph--</option>
       {{#each model.columns as |column|}}
-      {{#if column.isUnique}}
         <option value={{column.columnName}}>{{column.columnName}}</option>
-        {{/if}}
       {{/each}}
       </select>
     </div>
-  <div class="col-3">
+  <div class="col-9">
     <div class="form-group">
       <h6>Y-Axis:</h6>
       <ul>
-    	{{#each model.columns as |ch|}}
-        {{#if ch.isNumeric}}
-          <li>{{input type="checkbox" checked=ch.isCheck}}
-        	<label>{{ch.columnName}}</label></li>
-          {{/if}}
+    	{{#each model.columns as |ch index|}}
+          <li>
+            <form>
+            <div class="row">
+              <div class="col-4">
+            {{input type="checkbox" checked=ch.isCheck}}
+        	<label>{{ch.columnName}}</label>
+        </div>
+
+        <div>
+        <select class="form-control form-control-sm" onchange={{action (action "setType" index) value="target.value"}}>
+          <option value="" selected>--Chart-Type--</option>
+          {{#each chartTypes as |type|}}
+            <option value={{type}}>{{type}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+
+          </div>
+          </form>
+        </li>
     	{{/each}}
     </ul>
     <button class="btn btn-secondary btn-sm" {{action 'showAxes'}}>ShowCharts</button>
     </div>
   </div>
-
-
-
-  <div class="col-6">
-    <div class="form-group">
-      <h6>Select the columns to show</h6>
-      <ul>
-    	{{#each model.columns as |ch|}}
-      <li>{{input type="checkbox" checked=ch.isChecked}}
-        	<label>{{ch.columnName}}</label></li>
-    	{{/each}}
-    </ul>
-    <button class="btn btn-secondary btn-sm" {{action 'showColumns'}}>Showtable</button>
-    </div>
-  </div>
 </div>
 
-<div>
-{{#if viewFilter}}
-<button class="btn btn-sm" {{action 'hideFilter'}}>cancel</button>
-<div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;">
-<table class="table">
-  {{#each filterData as |row|}}
-    <tr>
-      {{#each row as |col|}}
-      <td>{{col}}</td>
-      {{/each}}
-    </tr>
-  {{/each}}
-</table>
-</div>
-{{/if}}
-</div>
+{{#time-series file=model}}
+{{/time-series}}
+
 
 <div>
   {{#if viewMatrix}}
   <button class="btn btn-sm" {{action 'hideMatrix'}}>cancel</button>
+  <button class="btn btn-info btn-sm" {{action 'swapAxis'}}>SwapAxis</button>
   <div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;">
   <table class="table">
     {{#each matrixData as |row i|}}
@@ -139,6 +129,7 @@
   </div>
   {{/if}}
 </div>
+
 
 <div class="modal hide" id="mymodal">
   <div class="modal-dialog modal-lg" role="document">
@@ -160,10 +151,47 @@
   </div>
 </div>
 
-<div class="modal hide" id="image-loader">
-  <div class="modal-dialog">
-  <div class="modal-body">
-    <img src="assets/images/pageloader.gif" alt="Loading....">
+<div class="modal hide" id="chart-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+        <ul>
+        {{#each chartAxes as |column index|}}
+        <li>
+          <form>
+          <div class="row">
+            <div class="col-3">
+              <label>{{column}}</label>
+            </div>
+            <div>
+              <select class="form-control form-control-sm" onchange={{action (action "changedType" index) value="target.value"}}>
+                <option value="" selected>--Chart-Type--</option>
+                {{#each chartTypes as |type|}}
+                <option value={{type}}>{{type}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+        </form>
+      </li>
+      {{/each}}
+      </ul>
+
+
+      </div>
+      <div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;" id="chart-content">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
   </div>
-</div>
+  </div>
 </div>

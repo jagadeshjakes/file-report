@@ -1,0 +1,48 @@
+<h4>Time series</h4>
+<div class="row">
+  <div class="col-3">
+    <h6>X-Axis:</h6>
+    <select class="form-control form-control-sm" onchange={{action "setXAxis" value="target.value"}}>
+      <option value="no" selected>-select-graph--</option>
+      {{#each file.columns as |column|}}
+      {{#if column.isDate}}
+        <option value={{column.columnName}}>{{column.columnName}}</option>
+        {{/if}}
+      {{/each}}
+      </select>
+    </div>
+  <div class="col-9">
+    <div class="form-group">
+      <h6>Y-Axis:</h6>
+      <ul>
+    	{{#each file.columns as |ch index|}}
+      {{#if ch.isNumeric}}
+          <li>
+            <form>
+            <div class="row">
+              <div class="col-4">
+                {{input type="checkbox" checked=ch.isCheck}}
+        	       <label>{{ch.columnName}}</label>
+               </div>
+
+               <div>
+                 <select class="form-control form-control-sm" onchange={{action (action "setType" index) value="target.value"}}>
+                   <option value="" selected>--Chart-Type--</option>
+                   {{#each chartTypes as |type|}}
+                   <option value={{type}}>{{type}}</option>
+                   {{/each}}
+                 </select>
+               </div>
+               <div>
+
+               </div>
+          </div>
+          </form>
+        </li>
+        {{/if}}
+    	{{/each}}
+    </ul>
+    <button class="btn btn-secondary btn-sm" {{action 'showTimeSeries'}}>TimeSeries</button>
+    </div>
+  </div>
+</div>

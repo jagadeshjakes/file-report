@@ -12,7 +12,7 @@ module.exports = function(defaults) {
     destDir: 'assets'
   });
   app.import('bower_components/bootstrap/dist/js/bootstrap.js');
-  app.import('bower_components/highcharts/highcharts.js');
+  app.import('bower_components/highcharts/highstock.js');
   app.import('bower_components/highcharts/css/highcharts.css');
   app.import('bower_components/highcharts/modules/data.js');
   app.import('bower_components/highcharts/modules/drilldown.js');

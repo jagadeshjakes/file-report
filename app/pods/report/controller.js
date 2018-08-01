@@ -11,9 +11,12 @@ export default Ember.Controller.extend({
   filterData:null,
   viewMatrix:false,
   viewFilter:false,
+  viewChart:false,
   spinner:null,
   target:null,
-
+  chart:null,
+  chartAxes:null,
+  chartTypes:null,
 pieOptions: {
   chart: {
     plotBackgroundColor: null,
@@ -73,11 +76,10 @@ pieOptions: {
     var xstat=false;
     var ystat=false;
     $.each(columns,function(index,object){
-      //console.log(object);
-      if(object.columnName===x && object.key!=='UNI' && object.key!=='PRI'){
+      if(object.columnName===x){ //&& object.key!=='UNI' && object.key!=='PRI'){
         xstat=true;
       }
-      else if(object.columnName===y && object.key!=='UNI' && object.key!=='PRI'){
+      else if(object.columnName===y){ //&& object.key!=='UNI' && object.key!=='PRI'){
         ystat=true;
       }
 
@@ -91,45 +93,8 @@ pieOptions: {
     }
   },
   checkLastView:function(){
-    /*var bar = new ProgressBar.Circle('.container',{
-      color: '#aaa',
-      strokeWidth: 4,
-      trailWidth: 1,
-      easing: 'easeInOut',
-      duration: 1400,
-      svgStyle: {
-        display: 'block',
-        width: '20%'
-    },
-      text: {
-        autoStyleContainer: false
-      },
-      from: { color: '#aaa', width: 1 },
-      to: { color: '#333', width: 4 },
-      // Set default step function for all animate calls
-      step: function(state, circle) {
-        circle.path.setAttribute('stroke', state.color);
-        circle.path.setAttribute('stroke-width', state.width);
-
-        var value = Math.round(circle.value() * 100);
-        if (value === 0) {
-          circle.setText('');
-        } else {
-          circle.setText(value);
-        }
-
-      }
-    });
-    bar.animate(1.0)
-    bar.setText('10')*/
-    /*$('#circle').circleProgress({
-    value: 1,
-    text:'xs',
-    size: 150,
-    fill: {
-      gradient: ['#19DBF0']
-    }
-  });*/
+    var types=["line","area","column","scatter"];
+    this.set('chartTypes',types);
     this.set('target',document.getElementById('tem-content'));
     var opts = {
       lines: 10, // The number of lines to draw
@@ -191,11 +156,9 @@ pieOptions: {
   actions:{
     setXAxis:function(value){
       this.set('xAxis',value);
-      //console.log(value);
     },
     setYAxis:function(value){
       this.set('yAxis',value);
-      //console.log(value);
     },
     showMatrix:function(){
       if(this.showTable()){
@@ -207,7 +170,6 @@ pieOptions: {
         $.ajax({
   		      type:"POST",
   		      url:"/getmatrix",
-            //async:false,
   		      data:{tableName:this.get('model.table'),xaxis:this.get('xAxis'),yaxis:this.get('yAxis')},
   		      success:function(data){
                     datas=data;
@@ -263,7 +225,6 @@ pieOptions: {
         $('.modal-title').html(head);
         $('#modal-content').html(table);
         console.log(head);
-        //console.log(table);
         $('#mymodal').modal('toggle');
       });
     }
@@ -352,12 +313,9 @@ pieOptions: {
       var x=this.get('xAxis');
       var y=this.get('yAxis');
       spinner.spin(target);
-      //$('#image-loader').modal('toggle');
-      //console.log("start");
       $.ajax({
           type:"POST",
           url:"/getdrilldowndata",
-          //async:false,
           data:{tableName:this.get('model.table'),xaxis:this.get('xAxis'),yaxis:this.get('yAxis')},
           success:function(data){
                   datas=data;
@@ -372,40 +330,94 @@ pieOptions: {
     }
   },
   showAxes:function(){
+    var here=this
     var axes = this.get('model.columns').filterBy('isCheck', true);
+    var types=axes.mapBy('isNumeric');
+    var chart=axes.mapBy('value');
     axes=axes.mapBy('columnName');
+    console.log(axes);
+    console.log(types);
     var x=this.get('xAxis');
     var index = axes.indexOf(x);
     var spinner=this.get('spinner');
     var target=this.get('target');
     if(index!==-1){
       axes.splice(index, 1);
+      types.splice(index,1);
+      chart.splice(index,1);
     }
+    index=chart.indexOf("");
+    console.log(index);
+    if(index===-1){
     if(axes.length!==0 && x!=='no'){
+      this.set('chartAxes',axes);
       var options;
       spinner.spin(target);
       $.ajax({
           type:"POST",
           url:"/getaxes",
-          //async:false,
-          data:{tableName:this.get('model.table'),xaxis:x,yaxis:JSON.stringify(axes)},
+          data:{tableName:this.get('model.table'),xaxis:x,yaxis:JSON.stringify(axes),types:JSON.stringify(types),chart:JSON.stringify(chart)},
           success:function(data){
-                  //console.log(data);
                   options=data;
                  }
         }).then(function(){
           console.log(options);
           $('.modal-title').html("x-Axis:"+x+" y-Axis:"+axes);
-          $('#modal-content').highcharts(options).highcharts();
-          $('#mymodal').modal('toggle');
+          here.set('viewChart',true);
+          here.set('chartData',options);
+          $('#chart-content').highcharts(options)
+          here.set('chart',$('#chart-content').highcharts());
+          $('#chart-modal').modal('toggle');
           spinner.stop();
         })
 
     }
     else {
-      alert('X axis not selected or select Y axes other than X-axis');
+      alert('X axis not selected or select Y axes other than X-axis or select type of chart');
     }
+  }
+  else{
+    alert("select chart type");
+  }
 
+  },
+  setType:function(index,name){
+    console.log(index,name);
+    this.set('model.columns.'+index+'.value',name);
+    console.log(this.get('model.columns')[index]);
+
+  },
+  swapAxis:function(){
+    var arr=this.get('matrixData');
+      var trans=arr[0].map((col, i) => arr.map(row => row[i]));
+    console.log(trans);
+    this.set('matrixData',trans);
+    var t=this.get('xAxis');
+    this.set('xAxis',this.get('yAxis'));
+    this.set('yAxis',t);
+    this.set('viewMatrix',false);
+    this.set('viewMatrix',true);
+  },
+  changeType(index,type){
+    var options=this.get('chart');
+    options.series[index].update({
+      type:type
+    });
+    console.log(options);
+  },
+  changedType(index,type){
+    var col=this.get('chartAxes')[index];
+    var options=this.get('chart');
+    var loop=this.get('chartData')
+    $.each(loop.series,function(ind,object){
+      console.log(object);
+      if(object.colName===col){
+        console.log(object);
+        options.series[ind].update({
+          type:type
+        });
+      }
+    })
   }
 }
 
