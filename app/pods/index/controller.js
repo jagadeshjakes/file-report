@@ -4,7 +4,7 @@ export default Ember.Controller.extend({
   init(){
     this._super(...arguments);
     //var ProgressBar = require('progressbar.js')
-    
+
   },
   actions:{
     upload:function(){
@@ -47,7 +47,7 @@ export default Ember.Controller.extend({
           }
       }).then(function(){
         location.reload();
-      })
+      });
 
     }
   }

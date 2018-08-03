@@ -1,0 +1,156 @@
+
+<h4>Multiple Axes</h4>
+<div class="row" id='tem-content'>
+  <div class="col-3">
+    <h6>X-Axis:</h6>
+    <select class="form-control form-control-sm" onchange={{action "setXAxis" value="target.value"}}>
+      <option value="no" selected>-select-graph--</option>
+      {{#each file.columns as |column|}}
+        <option value={{column.columnName}}>{{column.columnName}}</option>
+      {{/each}}
+      </select>
+    </div>
+  <div class="col-9">
+    <div class="form-group">
+      <h6>Y-Axis:</h6>
+      <ul>
+    	{{#each file.columns as |ch index|}}
+          <li>
+            <form>
+            <div class="row">
+              <div class="col-4">
+            {{input type="checkbox" checked=ch.isAxesCheck}}
+        	<label>{{ch.columnName}}</label>
+        </div>
+
+        <div>
+        <select class="form-control form-control-sm" onchange={{action (action "setType" index 'ntime') value="target.value"}}>
+          <option value="no" selected>--Chart-Type--</option>
+          {{#each chartTypes as |type|}}
+            <option value={{type}}>{{type}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+
+          </div>
+          </form>
+        </li>
+    	{{/each}}
+    </ul>
+    <button class="btn btn-secondary btn-sm" {{action 'showAxes'}}>ShowCharts</button>
+    </div>
+  </div>
+</div>
+
+<br>
+{{!-- --------------------------------------Time Series------------------------------------------------}}
+<h4>Time Series</h4>
+<div class="row">
+  <div class="col-3">
+    <h6>X-Axis:</h6>
+    <select class="form-control form-control-sm" onchange={{action "setTXAxis" value="target.value"}}>
+      <option value="no" selected>-select-graph--</option>
+
+      {{#each file.columns as |column|}}
+      {{#if column.isDate}}
+        <option value={{column.columnName}}>{{column.columnName}}</option>
+        {{/if}}
+      {{/each}}
+
+      </select>
+    </div>
+  <div class="col-9">
+    <div class="form-group">
+      <h6>Y-Axis:</h6>
+      <ul>
+    	{{#each file.columns as |ch index|}}
+      {{#if ch.isNumeric}}
+          <li>
+            <form>
+            <div class="row">
+              <div class="col-4">
+            {{input type="checkbox" checked=ch.isTimeCheck}}
+        	<label>{{ch.columnName}}</label>
+        </div>
+
+        <div>
+        <select class="form-control form-control-sm" onchange={{action (action "setType" index 'time') value="target.value"}}>
+          <option value="no" selected>--Chart-Type--</option>
+          {{#each chartTypes as |type|}}
+            <option value={{type}}>{{type}}</option>
+            {{/each}}
+          </select>
+        </div>
+          {{input type=number value=ch.threshold placeholder="threshold"}}
+          color:
+          {{input type="color" value=ch.color}}
+          negative:
+          {{input type="color" value=ch.negative}}
+
+          </div>
+          </form>
+        </li>
+        {{/if}}
+    	{{/each}}
+    </ul>
+    <button class="btn btn-secondary btn-sm" {{action 'showTimeSeries' 1}}>ShowSeries</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal hide" id="chart-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          Pages:{{#each pages as |page|}}
+          {{#if page.isPage}}
+          <span style="color:blue" onclick={{action 'showTimeSeries' page.num}}>{{page.num}}</span>|
+          {{else}}
+          <span style="color:red">{{page.num}}</span>|
+          {{/if}}
+          {{/each}}
+        </div>
+        <div>
+        <ul>
+        {{#each chartAxes as |column index|}}
+        <li>
+          <form>
+          <div class="row">
+            <div class="col-3">
+              <label>{{column}}</label>
+            </div>
+            <div>
+              <select class="form-control form-control-sm" onchange={{action (action "changedType" index) value="target.value"}}>
+                <option value="" selected>--Chart-Type--</option>
+                {{#each chartTypes as |type|}}
+                <option value={{type}}>{{type}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+        </form>
+      </li>
+      {{/each}}
+      </ul>
+      </div>
+      <div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;" id="chart-table">
+        <div id="chart-content">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+  </div>
+</div>
