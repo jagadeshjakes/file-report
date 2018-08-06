@@ -120,6 +120,7 @@
           {{/if}}
           {{/each}}
         </div>
+        <button class="btn btn-success" {{action 'exportPDF'}}>exportPDF</button>
         <div>
         <ul>
         {{#each chartAxes as |column index|}}
@@ -143,8 +144,10 @@
       {{/each}}
       </ul>
       </div>
-      <div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;" id="chart-table">
+      <div style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;" id="pdf-content">
         <div id="chart-content">
+        </div>
+        <div id='sample'>
         </div>
       </div>
     </div>

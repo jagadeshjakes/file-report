@@ -4,7 +4,8 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'file-report',
     contentSecurityPolicy: {
-	     'style-src': "'self' 'unsafe-inline'"
+	     'style-src': "'self' 'unsafe-inline'",
+       'img-src':'self data:'
      },
     environment: environment,
     podModulePrefix: 'file-report/pods',

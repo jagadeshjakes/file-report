@@ -167,7 +167,7 @@ export default Ember.Component.extend({
               if(i===(page-1)){
                 ob={
                   "num":i+1,
-                  "isPage":false
+                  "isPage":false,
                 }
               }
               else{
@@ -198,6 +198,34 @@ export default Ember.Component.extend({
     }else {
       alert('select chart type');
     }
+  },
+  exportPDF(){
+    //var doc=new jsPDF();
+    var svg = this.get('chart').getSVG();
+    if (svg)
+      svg = svg.replace(/\r?\n|\r/g, '').trim();
+
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    canvg(canvas, svg);
+    var imgData = canvas.toDataURL('image/png');
+  // Generate PDF
+    var doc = new jsPDF('p', 'pt', 'a4');
+    var csv=this.get('chart').getCSV();
+    var lines=csv.split("\n");
+    var columns=lines[0].split(",");
+    var rows=[]
+    for(var i=1;i<lines.length;i++){
+	     rows.push(lines[i].split(','));
+    }
+    doc.addImage(imgData, 'PNG', 40, 40,500, 350);
+    doc.autoTable(columns, rows, {startY:400});
+    //doc.autoTable(columns, rows);
+
+    doc.save('test.pdf');
   }
 
   }
