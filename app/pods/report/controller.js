@@ -2,7 +2,7 @@ import Ember from 'ember';
 import $ from 'jquery';
 
 export default Ember.Controller.extend({
-
+  chart:null,
   showLoad:false,
   xAxis:'no',
   yAxis:'no',
@@ -197,6 +197,7 @@ export default Ember.Controller.extend({
   showDrillDown:function(){
     if(this.showTable()&&this.checkDrill()){
       var datas;
+      var here=this;
       var spinner=this.get('spinner');
       var target=this.get('target');
       var x=this.get('xAxis');
@@ -211,7 +212,9 @@ export default Ember.Controller.extend({
                  }
         }).then(function(data){
           $('.modal-title').html("x-Axis:"+x+" y-Axis:"+y);
-          $('#modal-content').highcharts(data).highcharts();
+
+          $('#modal-content').highcharts(data);
+          here.set('chart',$('#modal-content').highcharts());
           $('#mymodal').modal('toggle');
 
           spinner.stop();
@@ -266,7 +269,33 @@ export default Ember.Controller.extend({
     this.set('pages',pages);
     this.set('viewMatrix',false);
     this.set('viewColumns',true);
+  },
+  exportPDF(){
+    var svg = this.get('chart').getSVG();
+    if (svg){
+      svg = svg.replace(/\r?\n|\r/g, '').trim();
     }
+
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    canvg(canvas, svg);
+    var imgData = canvas.toDataURL('image/png');
+     // Generate PDF
+    var doc = new jsPDF('p', 'pt', 'a4');
+    var csv=this.get('chart').getCSV();
+    var lines=csv.split("\n");
+    var columns=lines[0].split(",");
+    var rows=[];
+    for(var i=1;i<lines.length;i++){
+	     rows.push(lines[i].split(','));
+    }
+    doc.addImage(imgData, 'PNG', 40, 40,500, 350);
+    doc.autoTable(columns, rows, {startY:400});
+    doc.save(this.get('model.table')+'.pdf');
+  }
 }
 
 });

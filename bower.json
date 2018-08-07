@@ -19,7 +19,7 @@
     "progressbar.js": "^1.0.1",
     "jquery-circle-progress": "^1.2.2",
     "jspdf": "^1.4.1",
-    "canvg": "^1.3.0",
-    "jspdf-autotable": "^2.3.4"
+    "jspdf-autotable": "^2.3.4",
+    "canvg": "canvg-gabelerner#*"
   }
 }

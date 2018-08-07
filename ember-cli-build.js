@@ -23,7 +23,8 @@ module.exports = function(defaults) {
   app.import('bower_components/highcharts/modules/drilldown.js');
   app.import('bower_components/spin.js/spin.js');
   app.import('bower_components/spin.js/jquery.spin.js');
-  app.import('bower_components/canvg/dist/canvg.js');
+  app.import('bower_components/canvg/canvg.js');
+  app.import('bower_components/rgb-color/dist/rgb-color.js');
   app.import('bower_components/jspdf-autotable/dist/jspdf.plugin.autotable.js');
   //app.import('bower_components/progressbar.js/dist/progressbar.js');
   //app.import('bower_components/progressbar.js/dist/progressbar.min.js');

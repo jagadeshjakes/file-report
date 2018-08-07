@@ -2,6 +2,7 @@ import Ember from 'ember';
 import $ from 'jquery';
 export default Ember.Component.extend({
   classNames: ['multiple-axes'],
+  fileName:'test',
   chart:null,
   pages:null,
   chartData:null,
@@ -46,14 +47,13 @@ export default Ember.Component.extend({
         console.log(this.get('file.columns')[index]);
       }
     },
-    showAxes:function(){
+    showAxes:function(xp,yp){
+      console.log(xp,yp);
       var here=this;
       var axes = this.get('file.columns').filterBy('isAxesCheck', true);
       var types=axes.mapBy('isNumeric');
       var chart=axes.mapBy('axesChart');
       axes=axes.mapBy('columnName');
-      //console.log(axes);
-      //console.log(types);
       var x=this.get('xAxis');
       var index = axes.indexOf(x);
       var spinner=this.get('spinner');
@@ -73,7 +73,8 @@ export default Ember.Component.extend({
         $.ajax({
             type:"POST",
             url:"/getaxes",
-            data:{tableName:this.get('file.table'),xaxis:x,yaxis:JSON.stringify(axes),types:JSON.stringify(types),chart:JSON.stringify(chart)},
+            data:{tableName:this.get('file.table'),xaxis:x,yaxis:JSON.stringify(axes),types:JSON.stringify(types),chart:JSON.stringify(chart),
+          xp:xp-1,yp:yp-1},
             success:function(data){
                     options=data;
                    }
@@ -81,9 +82,9 @@ export default Ember.Component.extend({
             console.log(options);
             $('.modal-title').html("x-Axis:"+x+" y-Axis:"+axes);
             here.set('chartData',options);
-            $('#chart-content').highcharts(options);
-            here.set('chart',$('#chart-content').highcharts());
-            $('#chart-modal').modal('toggle');
+            $('#multi-content').highcharts(options);
+            here.set('chart',$('#multi-content').highcharts());
+            $('#multi-modal').modal('toggle');
             spinner.stop();
           });
 
@@ -116,7 +117,7 @@ export default Ember.Component.extend({
     this.set('tXAxis',value);
     console.log();
   },
-  showTimeSeries:function(page){
+  showTimeSeries:function(page,mod){
     var here=this;
     var x=this.get('tXAxis');
     var axes = this.get('file.columns').filterBy('isTimeCheck', true);
@@ -129,19 +130,20 @@ export default Ember.Component.extend({
     var target=this.get('target');
     var index=chart.indexOf(undefined);
     var ind=chart.indexOf("no");
+    var colors=["#e22a1d","#dd8508","#e9ed12","#4ced11","#11eda0","#06e8dc","#0611e8","#9c06e8","#ed10d3","#f20430"];
     $.each(color,function(ind,object){
-      if(object===undefined){
-        color[ind]='#99ccff'
+      if(object===undefined || object===''){
+        color[ind]=colors[Math.floor(Math.random() * 10)];
       }
     });
     $.each(negative,function(ind,object){
-      if(object===undefined){
-        negative[ind]='#ff5050'
+      if(object===undefined || object===''){
+        negative[ind]=colors[Math.floor(Math.random() * 10)];
       }
     });
     $.each(threshold,function(ind,object){
-      if(object===undefined){
-        threshold[ind]=0
+      if(object===undefined || object===''){
+        threshold[ind]=0;
       }
     });
     console.log(threshold);
@@ -161,20 +163,20 @@ export default Ember.Component.extend({
                    }
           }).then(function(){
             var options=datas.options;
-            var pages=[]
+            var pages=[];
             for(var i=0;i<=datas.pages;i++){
               var ob;
               if(i===(page-1)){
                 ob={
                   "num":i+1,
-                  "isPage":false,
-                }
+                  "isPage":false
+                };
               }
               else{
                 ob={
                   "num":i+1,
                   "isPage":true
-                }
+                };
               }
               pages.push(ob);
             }
@@ -185,7 +187,7 @@ export default Ember.Component.extend({
             here.set('chartData',options);
             $('#chart-content').highcharts(options);
             here.set('chart',$('#chart-content').highcharts());
-            if(page==1){
+            if(page===1 && mod==='tog'){
             $('#chart-modal').modal('toggle');
             }
             spinner.stop();
@@ -202,8 +204,9 @@ export default Ember.Component.extend({
   exportPDF(){
     //var doc=new jsPDF();
     var svg = this.get('chart').getSVG();
-    if (svg)
+    if (svg){
       svg = svg.replace(/\r?\n|\r/g, '').trim();
+    }
 
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
@@ -212,20 +215,21 @@ export default Ember.Component.extend({
     context.clearRect(0, 0, canvas.width, canvas.height);
     canvg(canvas, svg);
     var imgData = canvas.toDataURL('image/png');
-  // Generate PDF
+     // Generate PDF
     var doc = new jsPDF('p', 'pt', 'a4');
     var csv=this.get('chart').getCSV();
     var lines=csv.split("\n");
     var columns=lines[0].split(",");
-    var rows=[]
+    var rows=[];
     for(var i=1;i<lines.length;i++){
 	     rows.push(lines[i].split(','));
     }
     doc.addImage(imgData, 'PNG', 40, 40,500, 350);
     doc.autoTable(columns, rows, {startY:400});
-    //doc.autoTable(columns, rows);
-
-    doc.save('test.pdf');
+    if(this.get('fileName')===''){
+      this.set('fileName',this.get('file.table'));
+    }
+    doc.save(this.get('fileName')+'.pdf');
   }
 
   }

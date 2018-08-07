@@ -36,11 +36,7 @@
       </div>
     </div>
 </div>
-
-
 <br>
-
-
 <br>
 
 <div>
@@ -86,7 +82,7 @@
 </div>
 {{#multiple-axes file=model}}
 {{/multiple-axes}}
-
+<br><br><br><br><br>
 <div class="modal hide" id="mymodal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -96,6 +92,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      <button class="btn btn-success" {{action 'exportPDF'}}>exportPDF</button>
       <div class="modal-body" style="border: 1px #000000 solid;height: 500px;width: 1200px;overflow: scroll;">
         <div id="modal-content">
         </div>
